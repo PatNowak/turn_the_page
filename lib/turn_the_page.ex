@@ -23,7 +23,7 @@ defmodule TurnThePage do
   end
 
   def paginate(module_name, [page: page, limit: limit]) when is_atom(module_name) do
-    paginate(from m in module_name, [page: page, limit: limit])
+    paginate(from(m in module_name), [page: page, limit: limit])
   end
 
   def paginate(%Ecto.Query{} = query, [page: page, limit: limit]) do
