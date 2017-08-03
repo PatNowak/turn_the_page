@@ -1,6 +1,6 @@
 # TurnThePage
 
-**TODO: Add description**
+**Fast, simple and lightweight pagination system for your Elixir application.**
 
 ## Installation
 
@@ -18,4 +18,3 @@ end
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at [https://hexdocs.pm/turn_the_page](https://hexdocs.pm/turn_the_page).
-

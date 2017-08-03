@@ -1,8 +1,42 @@
-defmodule TurnThePageTest do
-  use ExUnit.Case
-  doctest TurnThePage
+defmodule JobMessenger.TurnThePageTest do
+  use ExUnit.Case, async: true
 
-  test "greets the world" do
-    assert TurnThePage.hello() == :world
+  test "paginate raises ArgumentError for negative page" do
+    assert_raise ArgumentError, "Page should be positive integer", fn ->
+      TurnThePage.paginate([1, 2, 3], page: -1, limit: 54)
+    end
+  end
+
+  test "paginate raises ArgumentError for negative limit" do
+    assert_raise ArgumentError, "Limit should be positive integer", fn ->
+      TurnThePage.paginate([1, 2, 3], page: 12, limit: -3)
+    end
+  end
+
+  test "paginate raises ArgumentError for not allowed collection" do
+    assert_raise ArgumentError, "We can paginate only queries and lists", fn ->
+      TurnThePage.paginate(%{}, page: 12, limit: 3)
+    end
+  end
+
+  test "paginate for lists returns properly first page" do
+    result = (1..100)
+    |> Enum.to_list()
+    |> TurnThePage.paginate(page: 1, limit: 12)
+    assert Enum.count(result) == 12
+  end
+
+  test "paginate for lists returns properly last not full page" do
+    result = (1..100)
+    |> Enum.to_list()
+    |> TurnThePage.paginate(page: 9, limit: 12)
+    assert Enum.count(result) == 4 # 100 - 96
+  end
+
+  test "paginate for lists returns properly last empty page" do
+    result = (1..100)
+    |> Enum.to_list()
+    |> TurnThePage.paginate(page: 100, limit: 12)
+    assert Enum.count(result) == 0
   end
 end
