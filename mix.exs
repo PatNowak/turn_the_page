@@ -7,23 +7,36 @@ defmodule TurnThePage.Mixfile do
       version: "0.1.0",
       elixir: "~> 1.5",
       start_permanent: Mix.env == :prod,
-      deps: deps()
+      deps: deps(),
+      source_url: "https://github.com/PatNowak/turn_the_page",
+      name: "TurnThePage",
+      package: package(),
+      description: description()
     ]
   end
 
-  # Run "mix help compile.app" to learn about applications.
   def application do
     [
       extra_applications: [:logger]
     ]
   end
 
-  # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
       {:ecto, "~> 2.0.0"}
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
     ]
+  end
+
+  defp package do
+    [
+       name: :turn_the_page,
+       maintainers: ["Patryk Nowak"],
+       licenses: ["Apache 2.0"],
+       links: %{"GitHub" => "https://github.com/PatNowak/turn_the_page"}
+   ]
+  end
+
+  defp description do
+    "Fast, simple and lightweight pagination system for your Elixir application."
   end
 end
