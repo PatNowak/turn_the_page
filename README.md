@@ -10,7 +10,7 @@ by adding `turn_the_page` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:turn_the_page, "~> 0.1.0"}
+    {:turn_the_page, "~> 0.2.2"}
   ]
 end
 ```
