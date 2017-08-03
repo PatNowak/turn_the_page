@@ -19,6 +19,20 @@ defmodule JobMessenger.TurnThePageTest do
     end
   end
 
+  test "paginate raises ArgumentError for module without a schema" do
+    assert_raise ArgumentError, "This module doesn't have schema!", fn ->
+      TurnThePage.paginate(Enum, page: 12, limit: 3)
+    end
+  end
+
+  test "paginate works no matter of order additional parameters" do
+    assert TurnThePage.paginate([1, 2, 3], page: 1, limit: 2) == TurnThePage.paginate([1, 2, 3], limit: 2, page: 1)
+  end
+
+  test "paginate works with default parameters fine" do
+    assert TurnThePage.paginate([1, 2, 3]) == TurnThePage.paginate([1, 2, 3], page: 1, limit: 20)
+  end
+
   test "paginate for lists returns properly first page" do
     result = (1..100)
     |> Enum.to_list()

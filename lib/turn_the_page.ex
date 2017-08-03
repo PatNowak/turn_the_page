@@ -12,32 +12,35 @@ defmodule TurnThePage do
 
     Parameters:
       name of the module, query or list
-      keyword list in format [page: page, limit: limit]
+      opts
+
+    Possible options are:
+      page - by default 1
+      limit - by default 20
 
     It returns Ecto.Query so to use is to have to apply at the end:
       Repo.all()
   """
   @spec paginate(Ecto.Query.t | [] | atom, [page: number, limit: number]) :: Ecto.Query.t
-  def paginate(_collection, [page: page, limit: _limit]) when page <= 0 do
-    raise ArgumentError, message: "Page should be positive integer"
+  def paginate(collection, opts \\ [])
+  def paginate(module, opts) when is_atom(module) do
+    module = module
+    |> validate_module()
+    paginate(from(m in module), opts)
   end
 
-  def paginate(_collection, [page: _page, limit: limit]) when limit <= 0 do
-    raise ArgumentError, message: "Limit should be positive integer"
-  end
+  def paginate(%Ecto.Query{} = query, opts) do
+    %{page: page, limit: limit} = validate_options(opts)
 
-  def paginate(module_name, [page: page, limit: limit]) when is_atom(module_name) do
-    paginate(from(m in module_name), [page: page, limit: limit])
-  end
-
-  def paginate(%Ecto.Query{} = query, [page: page, limit: limit]) do
     offset = (page - 1) * limit
     query
     |> offset(^offset)
     |> limit(^limit)
   end
 
-  def paginate(list, [page: page, limit: limit]) when is_list(list) do
+  def paginate(list, opts) when is_list(list) do
+    %{page: page, limit: limit} = validate_options(opts)
+
     list
     |> Stream.chunk(limit, limit, [])
     |> Enum.at(page - 1, [])
@@ -45,5 +48,55 @@ defmodule TurnThePage do
 
   def paginate(_collection, [page: _page, limit: _limit]) do
     raise ArgumentError, message: "We can paginate only queries and lists"
+  end
+
+  defp validate_module(module) do
+    has_schema? = module
+    |> apply(:module_info, [:exports])
+    |> Keyword.get(:__schema__)
+
+    if has_schema? do
+      module
+    else
+      raise ArgumentError, message: "This module doesn't have schema!"
+    end
+  end
+
+  defp validate_options(options) do
+    page =
+      options
+      |> Keyword.get(:page, 1)
+      |> validate_page()
+
+    limit =
+      options
+      |> Keyword.get(:limit, 20)
+      |> validate_limit()
+
+    %{page: page, limit: limit}
+  end
+
+  defp validate_page(page) when is_number(page) do
+    if page < 1 do
+      raise ArgumentError, message: "Page should be positive integer"
+    else
+      page
+    end
+  end
+
+  defp validate_page(_page) do
+    raise ArgumentError, message: "Page should be positive integer"
+  end
+
+  defp validate_limit(limit) when is_number(limit) do
+    if limit < 1 do
+      raise ArgumentError, message: "Limit should be positive integer"
+    else
+      limit
+    end
+  end
+
+  defp validate_limit(_limit) do
+    raise ArgumentError, message: "Limit should be positive integer"
   end
 end
