@@ -8,12 +8,16 @@ defmodule TurnThePage do
 
   @doc """
     It paginates the query or the list using Ecto.Query functions in case of query
-    and Stream / Enum functions for list.
+    and Stream / Enum functions for list and returns the query.
 
     Parameters:
       - name of the module, query or list
       - keyword list in format [page: page, limit: limit]
+
+    It returns Ecto.Query so to use is to have to apply at the end:
+      Repo.all().
   """
+  @spec paginate(Ecto.Query.t | [] | atom, [page: number, limit: number]) :: Ecto.Query.t
   def paginate(_collection, [page: page, limit: _limit]) when page <= 0 do
     raise ArgumentError, message: "Page should be positive integer"
   end
