@@ -23,7 +23,8 @@ defmodule TurnThePage.Mixfile do
 
   defp deps do
     [
-      {:ecto, "~> 2.0.0"}
+      {:ecto, "~> 2.0.0"},
+      {:ex_doc, "~> 0.16.2", only: :dev}
     ]
   end
 
