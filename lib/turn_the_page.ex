@@ -66,14 +66,22 @@ defmodule TurnThePage do
     page =
       options
       |> Keyword.get(:page, 1)
-      |> String.to_integer()
       |> validate_page()
 
     limit =
       options
       |> Keyword.get(:limit, 20)
-      |> String.to_integer()
       |> validate_limit()
+
+    page = case is_number(page) do
+      true -> page
+      false -> String.to_integer(page)
+    end
+
+    limit = case is_number(limit) do
+      true -> page
+      false -> String.to_integer(limit)
+    end
 
     %{page: page, limit: limit}
   end
